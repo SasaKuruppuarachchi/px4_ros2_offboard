@@ -4,7 +4,7 @@
   <name>px4_ros2_offboard</name>
   <version>0.0.0</version>
   <description>ROS2 PX4 Interface Velocity Control</description>
-  <maintainer email="braden@arkelectron.com">braden</maintainer>
+  <maintainer email="sasa.kuruppuarachchi@gmail.com">braden</maintainer>
   <license>BSD-3</license>
   
   <depend>px4_msgs</depend>

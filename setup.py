@@ -21,7 +21,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Braden',
-    maintainer_email='braden@arkelectron.com',
+    maintainer_email='sasa.kuruppuarachchi@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
