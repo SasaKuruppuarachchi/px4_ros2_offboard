@@ -1,0 +1,71 @@
+<%
+# Input parameters
+drone_namespace     = @settings["drone_namespace"]
+gps                 = @settings["gps"] == "true"
+simulation          = @settings["simulation"] == "true"
+estimator_plugin    = @settings["estimator_plugin"]
+
+# Other parameters
+behavior_type               = "position" # "trajectory"
+motion_controller_plugin    = "pid_speed_controller" # "differential_flatness_controller"
+
+if simulation
+    config_path     = "sim_config"
+    platform_config_file = "sim_config/platform_config.yaml"
+else
+    config_path     = "real_config"
+    platform_config_file = "real_config/platform_config_odom.yaml"
+end
+
+if estimator_plugin == "mocap_pose"
+    platform_config_file = "real_config/platform_config_mocap.yaml"
+    state_estimator_config_file = "real_config/state_estimator_mocap.yaml"
+elsif estimator_plugin == "raw_odometry"
+
+    if gps and not simulation
+        state_estimator_config_file = "real_config/state_estimator_gps.yaml"
+    elsif gps and simulation
+        state_estimator_config_file = "sim_config/state_estimator_gps.yaml"
+    end
+
+    if not gps and not simulation
+        state_estimator_config_file = "real_config/state_estimator_odom.yaml"
+    elsif not gps and simulation
+        state_estimator_config_file = "sim_config/state_estimator_odom.yaml"
+    end
+end
+
+%>
+
+name: ros2_example
+root: ./
+startup_window: params
+pre_window: ls; ls
+windows:
+  - params:
+      layout: tiled
+      panes:
+        - ros2 run agi_alphanumeric_viewer agi_alphanumeric_viewer_node --ros-args -r  __ns:=/<%= drone_namespace %>
+        - ros2 run px4_ros2_offboard control
+        - ros2 launch px4_ros2_offboard offboard_velocity_control.launch.py
+        
+        
+  - processes:
+      layout: even-horizontal
+      panes:
+        - MicroXRCEAgent udp4 -p 8888
+        - ls #cd /workspaces/agipix_control/src/thirdparty/PX4-Autopilot && make px4_sitl gz_x500
+  - analyze:
+      layout: even-horizontal
+      panes:
+        - ros2 launch foxglove_bridge foxglove_bridge_launch.xml
+        - ros2 launch as2_platform_pixhawk pixhawk_launch.py
+            namespace:=<%= drone_namespace %>
+            use_sim_time:=<%= simulation %>
+            platform_config_file:=<%= platform_config_file %>
+        - ros2 launch as2_state_estimator state_estimator_launch.py
+            namespace:=<%= drone_namespace %>
+            use_sim_time:=<%= simulation %>
+            plugin_name:=<%= estimator_plugin %>
+            plugin_config_file:=<%= state_estimator_config_file %>
+  

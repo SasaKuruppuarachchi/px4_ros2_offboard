@@ -80,4 +80,12 @@ def generate_launch_description():
             name='rviz2',
             arguments=['-d', [os.path.join(package_dir, 'visualize.rviz')]]
         )
+        # ,
+        # Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     name='static_transform_publisher',
+        #     output='screen',
+        #     arguments=['0', '0', '0', '0', '0', '0', '1.0', 'drone0/map', 'map']
+        # )
     ])

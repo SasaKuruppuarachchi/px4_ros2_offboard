@@ -264,22 +264,22 @@ class OffboardControl(Node):
     #receives Twist commands from Teleop and converts NED -> FLU
     def offboard_velocity_callback(self, msg):
         #implements NED -> FLU Transformation
-        self.velocity.x = -msg.linear.y
-        self.velocity.y = msg.linear.x
+        self.velocity.x = msg.linear.x
+        self.velocity.y = msg.linear.y
         self.velocity.z = -msg.linear.z
         self.yaw = msg.angular.z
 
-        # X (FLU) is -Y (NED)
-        self.velocity.x = -msg.linear.y
+        # # X (FLU) is -Y (NED)
+        # self.velocity.x = -msg.linear.y
 
-        # Y (FLU) is X (NED)
-        self.velocity.y = msg.linear.x
+        # # Y (FLU) is X (NED)
+        # self.velocity.y = msg.linear.x
 
-        # Z (FLU) is -Z (NED)
-        self.velocity.z = -msg.linear.z
+        # # Z (FLU) is -Z (NED)
+        # self.velocity.z = -msg.linear.z
 
-        # A conversion for angular z is done in the attitude_callback function(it's the '-' in front of self.trueYaw)
-        self.yaw = msg.angular.z
+        # # A conversion for angular z is done in the attitude_callback function(it's the '-' in front of self.trueYaw)
+        # self.yaw = msg.angular.z
 
     #receives current trajectory values from drone and grabs the yaw value of the orientation
     def attitude_callback(self, msg):
