@@ -49,6 +49,7 @@ from px4_msgs.msg import VehicleCommand
 from geometry_msgs.msg import Twist, Vector3
 from math import pi
 from std_msgs.msg import Bool
+import math
 
 
 class OffboardControl(Node):
@@ -264,11 +265,11 @@ class OffboardControl(Node):
     #receives Twist commands from Teleop and converts NED -> FLU
     def offboard_velocity_callback(self, msg):
         #implements FLU -> FRD Transformation
-        self.velocity.x = -msg.linear.x
-        self.velocity.y = msg.linear.y
+        self.velocity.x = msg.linear.x
+        self.velocity.y = -msg.linear.y
         self.velocity.z = -msg.linear.z
         self.yaw = msg.angular.z
-        self.get_logger().info(f"speed cmd: {self.velocity.x}, {self.velocity.y}, {self.trueYaw}")
+        self.get_logger().info(f"speed cmd: {self.velocity.x}, {self.velocity.y}, {math.degrees(self.trueYaw)}")
         # # X (FLU) is -Y (NED)
         # self.velocity.x = -msg.linear.y
 
@@ -289,7 +290,7 @@ class OffboardControl(Node):
         # FRD to > NED Quaternion rotation from the FRD body frame to the NED earth frame
         # trueYaw is the drones current yaw value
         # yaw   = atan2(2.0 * (q.q3 * q.q0 + q.q1 * q.q2) , - 1.0 + 2.0 * (q.q0 * q.q0 + q.q1 * q.q1));
-        self.trueYaw = -(np.arctan2(2.0*(orientation_q[3]*orientation_q[0] + orientation_q[1]*orientation_q[2]), 
+        self.trueYaw = math.radians(180) -(np.arctan2(2.0*(orientation_q[3]*orientation_q[0] + orientation_q[1]*orientation_q[2]), 
                                   1.0 - 2.0*(orientation_q[0]*orientation_q[0] + orientation_q[1]*orientation_q[1])))
         
     #publishes offboard control modes and velocity as trajectory setpoints
