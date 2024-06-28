@@ -263,12 +263,12 @@ class OffboardControl(Node):
 
     #receives Twist commands from Teleop and converts NED -> FLU
     def offboard_velocity_callback(self, msg):
-        #implements NED -> FLU Transformation
-        self.velocity.x = msg.linear.x
+        #implements FLU -> FRD Transformation
+        self.velocity.x = -msg.linear.x
         self.velocity.y = msg.linear.y
         self.velocity.z = -msg.linear.z
         self.yaw = msg.angular.z
-
+        self.get_logger().info(f"speed cmd: {self.velocity.x}, {self.velocity.y}, {self.trueYaw}")
         # # X (FLU) is -Y (NED)
         # self.velocity.x = -msg.linear.y
 
@@ -283,9 +283,12 @@ class OffboardControl(Node):
 
     #receives current trajectory values from drone and grabs the yaw value of the orientation
     def attitude_callback(self, msg):
+        # This is similar to the mavlink message ATTITUDE_QUATERNION, but for onboard use
+        # The quaternion uses the Hamilton convention, and the order is q(w, x, y, z)
         orientation_q = msg.q
-
-        #trueYaw is the drones current yaw value
+        # FRD to > NED Quaternion rotation from the FRD body frame to the NED earth frame
+        # trueYaw is the drones current yaw value
+        # yaw   = atan2(2.0 * (q.q3 * q.q0 + q.q1 * q.q2) , - 1.0 + 2.0 * (q.q0 * q.q0 + q.q1 * q.q1));
         self.trueYaw = -(np.arctan2(2.0*(orientation_q[3]*orientation_q[0] + orientation_q[1]*orientation_q[2]), 
                                   1.0 - 2.0*(orientation_q[0]*orientation_q[0] + orientation_q[1]*orientation_q[1])))
         

@@ -35,8 +35,8 @@ moveBindings = {
     's': (0, 0, -1, 0),#Z-
     'a': (0, 0, 0, -1), #Yaw+
     'd': (0, 0, 0, 1),#Yaw-
-    '\x1b[A' : (-1, 0, 0, 0),  #Up Arrow
-    '\x1b[B' : (1, 0, 0, 0), #Down Arrow
+    '\x1b[A' : (1, 0, 0, 0),  #Up Arrow
+    '\x1b[B' : (-1, 0, 0, 0), #Down Arrow
     '\x1b[C' : (0, -1, 0, 0), #Right Arrow
     '\x1b[D' : (0, 1, 0, 0),  #Left Arrow
 }
