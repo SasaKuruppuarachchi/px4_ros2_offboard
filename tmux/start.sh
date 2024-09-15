@@ -79,6 +79,7 @@ drone_namespace=${drone_namespace:="drone"}
 
 if [[ ${simulated} == "true" ]]; then
   simulation_config="sim_config/world.json"
+  echo simulation_config
 fi
 
 # Generate the list of drone namespaces

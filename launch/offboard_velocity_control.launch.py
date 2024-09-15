@@ -39,6 +39,8 @@ from launch import LaunchDescription
 from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, EnvironmentVariable, PathJoinSubstitution
 import os
 
 
@@ -46,12 +48,22 @@ def generate_launch_description():
     package_dir = get_package_share_directory('px4_ros2_offboard')
     # bash_script_path = os.path.join(package_dir, 'scripts', 'TerminatorScript.sh')
     return LaunchDescription([
-        # ExecuteProcess(cmd=['bash', bash_script_path], output='screen'),
+        DeclareLaunchArgument('namespace',
+                              default_value='drone0',
+                              description='Drone namespace'),
+        DeclareLaunchArgument('use_sim_time',
+                              description='Use simulation clock if true',
+                              default_value='false'),
         Node(
             package='px4_ros2_offboard',
             namespace='px4_ros2_offboard',
             executable='visualizer',
-            name='visualizer'
+            name='visualizer',
+            parameters=[
+                {
+                    'use_sim_time': LaunchConfiguration('use_sim_time'),
+                },
+            ]
         ),
         # Node(
         #     package='px4_ros2_offboard',
@@ -71,14 +83,24 @@ def generate_launch_description():
             package='px4_ros2_offboard',
             namespace='px4_ros2_offboard',
             executable='velocity_control',
-            name='velocity'
+            name='velocity',
+            parameters=[
+                {
+                    'use_sim_time': LaunchConfiguration('use_sim_time'),
+                },
+            ]
         ),
         Node(
             package='rviz2',
             namespace='',
             executable='rviz2',
             name='rviz2',
-            arguments=['-d', [os.path.join(package_dir, 'visualize.rviz')]]
+            arguments=['-d', [os.path.join(package_dir, 'visualize.rviz')]],
+            parameters=[
+                {
+                    'use_sim_time': LaunchConfiguration('use_sim_time'),
+                },
+            ]
         )
         # ,
         # Node(
