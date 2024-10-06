@@ -169,8 +169,18 @@ Pressing *Space* will arm the drone. Wait a moment and it will takeoff and switc
 
 Using the controls, click *W* to send a vertical veloctiy command and take off. Once in the air you can control it as you see fit.
 
+## Joystick Control
+
+Connect the Joystick controller and run,
+```bash 
+ros2 launch teleop_twist_joy teleop-launch.py config_filepath:=/workspaces/agipix_control/src/px4_ros2_offboard/joy_config/ps3.config.yaml
+```
+
 ## Closing Simulation *IMPORTANT*
-When closing the simulation, it is very tempting to just close the terminal windows. However, this will leave Gazebo running in the background, potentially causing issues when you run Gazebo in the future. To correctly end the Gazebo simulation, go to it's terminal window and click *Ctrl+C*. This will close Gazebo and all of it's child processes. Then, you can close the other terminal windows.
+When closing the simulation, it is very important to follow this order
+
+1. Stop the simulation in IsaacSIM gui
+2. Close the Sim from GUI or *Ctrl+C* in the actual simulation launch terminal.
  
 
  ## Explanation of processes.py

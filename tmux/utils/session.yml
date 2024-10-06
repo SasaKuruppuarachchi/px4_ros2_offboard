@@ -55,6 +55,7 @@ windows:
       panes:
         - MicroXRCEAgent udp4 -p 8888
         - ls #cd /workspaces/agipix_control/src/thirdparty/PX4-Autopilot && make px4_sitl gz_x500
+        - ros2 launch teleop_twist_joy teleop-launch.py config_filepath:=/workspaces/agipix_control/src/px4_ros2_offboard/joy_config/ps3.config.yaml
   - analyze:
       layout: even-horizontal
       panes:
