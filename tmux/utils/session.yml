@@ -53,7 +53,7 @@ windows:
   - processes:
       layout: even-horizontal
       panes:
-        - MicroXRCEAgent udp4 -p 8888
+        - sudo MicroXRCEAgent serial --dev /dev/ttyUSB0 -b 921600
         - ls #cd /workspaces/agipix_control/src/thirdparty/PX4-Autopilot && make px4_sitl gz_x500
         - ros2 launch teleop_twist_joy teleop-launch.py config_filepath:=/workspaces/agipix_control/src/px4_ros2_offboard/joy_config/ps3.config.yaml
   - analyze:
@@ -69,4 +69,18 @@ windows:
             use_sim_time:=<%= simulation %>
             plugin_name:=<%= estimator_plugin %>
             plugin_config_file:=<%= state_estimator_config_file %>
-  
+  - lidar:
+      layout: even-horizontal
+      panes:
+        - sorlidar && ros2 launch livox_ros_driver2 msg_MID360_launch.py
+        - sorlidar && ros2 launch fast_lio mapping.launch.py config_file:=mid360.yaml rviz:=false
+        - ros2 launch odom_transformer odom_transformer.launch.py
+        - sorlidar && #ros2 launch yolov5_ros2 yolov5_ros2_node.launch.py sub_topic:='/image' weights:='yolov5s.pt'
+  - debug:
+      layout: even-vertical
+      panes:
+        - ros2 topic echo /fmu/in/vehicle_visual_odometry
+        - ros2 run image_tools cam2image
+
+
+    

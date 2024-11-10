@@ -90,18 +90,18 @@ def generate_launch_description():
                 },
             ]
         ),
-        Node(
-            package='rviz2',
-            namespace='',
-            executable='rviz2',
-            name='rviz2',
-            arguments=['-d', [os.path.join(package_dir, 'visualize.rviz')]],
-            parameters=[
-                {
-                    'use_sim_time': LaunchConfiguration('use_sim_time'),
-                },
-            ]
-        )
+        # Node(
+        #     package='rviz2',
+        #     namespace='',
+        #     executable='rviz2',
+        #     name='rviz2',
+        #     arguments=['-d', [os.path.join(package_dir, 'visualize.rviz')]],
+        #     parameters=[
+        #         {
+        #             'use_sim_time': LaunchConfiguration('use_sim_time'),
+        #         },
+        #     ]
+        # )
         # ,
         # Node(
         #     package='tf2_ros',

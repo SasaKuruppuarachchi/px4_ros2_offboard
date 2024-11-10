@@ -138,47 +138,44 @@ class OffboardControl(Node):
     #implements a finite state machine
     def arm_timer_callback(self):
 
-        match self.current_state:
-            case "IDLE":
-                if(self.flightCheck and self.arm_message == True):
-                    self.current_state = "ARMING"
-                    self.get_logger().info(f"Arming")
+        if self.current_state == "IDLE":
+            if self.flightCheck and self.arm_message == True:
+                self.current_state = "ARMING"
+                self.get_logger().info(f"Arming")
 
-            case "ARMING":
-                if(not(self.flightCheck)):
-                    self.current_state = "IDLE"
-                    self.get_logger().info(f"Arming, Flight Check Failed")
-                elif(self.arm_state == VehicleStatus.ARMING_STATE_ARMED and self.myCnt > 10):
-                    self.current_state = "TAKEOFF"
-                    self.get_logger().info(f"Arming, Takeoff")
-                self.arm() #send arm command
+        elif self.current_state == "ARMING":
+            if not self.flightCheck:
+                self.current_state = "IDLE"
+                self.get_logger().info(f"Arming, Flight Check Failed")
+            elif self.arm_state == VehicleStatus.ARMING_STATE_ARMED and self.myCnt > 10:
+                self.current_state = "TAKEOFF"
+                self.get_logger().info(f"Arming, Takeoff")
+            self.arm()  # send arm command
 
-            case "TAKEOFF":
-                if(not(self.flightCheck)):
-                    self.current_state = "IDLE"
-                    self.get_logger().info(f"Takeoff, Flight Check Failed")
-                elif(self.nav_state == VehicleStatus.NAVIGATION_STATE_AUTO_TAKEOFF):
-                    self.current_state = "LOITER"
-                    self.get_logger().info(f"Takeoff, Loiter")
-                self.arm() #send arm command
-                self.take_off() #send takeoff command
+        elif self.current_state == "TAKEOFF":
+            if not self.flightCheck:
+                self.current_state = "IDLE"
+                self.get_logger().info(f"Takeoff, Flight Check Failed")
+            elif self.nav_state == VehicleStatus.NAVIGATION_STATE_AUTO_TAKEOFF:
+                self.current_state = "LOITER"
+                self.get_logger().info(f"Takeoff, Loiter")
+            self.arm()  # send arm command
+            self.take_off()  # send takeoff command
 
-            # waits in this state while taking off, and the 
-            # moment VehicleStatus switches to Loiter state it will switch to offboard
-            case "LOITER": 
-                if(not(self.flightCheck)):
-                    self.current_state = "IDLE"
-                    self.get_logger().info(f"Loiter, Flight Check Failed")
-                elif(self.nav_state == VehicleStatus.NAVIGATION_STATE_AUTO_LOITER):
-                    self.current_state = "OFFBOARD"
-                    self.get_logger().info(f"Loiter, Offboard")
-                self.arm()
+        elif self.current_state == "LOITER":
+            if not self.flightCheck:
+                self.current_state = "IDLE"
+                self.get_logger().info(f"Loiter, Flight Check Failed")
+            elif self.nav_state == VehicleStatus.NAVIGATION_STATE_AUTO_LOITER:
+                self.current_state = "OFFBOARD"
+                self.get_logger().info(f"Loiter, Offboard")
+            self.arm()
 
-            case "OFFBOARD":
-                if(not(self.flightCheck) or self.arm_state == VehicleStatus.ARMING_STATE_DISARMED or self.failsafe == True):
-                    self.current_state = "IDLE"
-                    self.get_logger().info(f"Offboard, Flight Check Failed")
-                self.state_offboard()
+        elif self.current_state == "OFFBOARD":
+            if not self.flightCheck or self.arm_state == VehicleStatus.ARMING_STATE_DISARMED or self.failsafe == True:
+                self.current_state = "IDLE"
+                self.get_logger().info(f"Offboard, Flight Check Failed")
+            self.state_offboard()
 
         if(self.arm_state != VehicleStatus.ARMING_STATE_ARMED):
             self.arm_message = False
