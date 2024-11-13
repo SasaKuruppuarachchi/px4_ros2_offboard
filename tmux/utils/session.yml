@@ -70,17 +70,21 @@ windows:
             plugin_name:=<%= estimator_plugin %>
             plugin_config_file:=<%= state_estimator_config_file %>
   - lidar:
-      layout: even-horizontal
+      layout: even-vertical
       panes:
         - sorlidar && ros2 launch livox_ros_driver2 msg_MID360_launch.py
         - sorlidar && ros2 launch fast_lio mapping.launch.py config_file:=mid360.yaml rviz:=false
         - ros2 launch odom_transformer odom_transformer.launch.py
-        - sorlidar && #ros2 launch yolov5_ros2 yolov5_ros2_node.launch.py sub_topic:='/image' weights:='yolov5s.pt'
+  - lidar:
+      layout: even-vertical
+      panes:
+        - sorlidar && ros2 run yolov5_ros2 obj_detect
+        - ros2 run image_tools cam2image
   - debug:
       layout: even-vertical
       panes:
         - ros2 topic echo /fmu/in/vehicle_visual_odometry
-        - ros2 run image_tools cam2image
+        - ls
 
 
     
