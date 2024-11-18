@@ -74,17 +74,17 @@ windows:
       panes:
         - sorlidar && ros2 launch livox_ros_driver2 msg_MID360_launch.py
         - sorlidar && ros2 launch fast_lio mapping.launch.py config_file:=mid360.yaml rviz:=false
-        - ros2 launch odom_transformer odom_transformer.launch.py
-  - lidar:
+        - ros2 launch odom_transformer publish_static_transforms.launch.py
+  - object_detection:
       layout: even-vertical
       panes:
-        - sorlidar && ros2 run yolov5_ros2 obj_detect
-        - ros2 run image_tools cam2image
+        - sorlidar && ros2 run yolov5_ros2 obj_detect ls
+        - sorlidar && ros2 launch usb_camera_driver usb_camera_node.launch.py
   - debug:
       layout: even-vertical
       panes:
         - ros2 topic echo /fmu/in/vehicle_visual_odometry
-        - ls
+        - sorlidar && ros2 launch robot_localization ukf.launch.py
 
 
     
