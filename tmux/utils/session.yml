@@ -85,10 +85,10 @@ windows:
         - sorlidar && ros2 run yolov5_ros2 obj_detect ls
         - sorlidar && ros2 launch usb_camera_driver usb_camera_node.launch.py
   - debug:
-      layout: even-vertical
+      layout: even-horizontal
       panes:
         - ros2 topic echo /fmu/in/vehicle_visual_odometry
-        - sorlidar && ros2 launch robot_localization ukf.launch.py
+        - ros2 run odom_transformer publish_to_px4.py
 
 
     
