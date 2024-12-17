@@ -48,6 +48,7 @@ class OffboardCommander(Node):
         self.joy_found = False
         self.old_joy_axes = Joy.axes
         self.old_joy_buttons = Joy.buttons
+        self.joy_mode = False
 
         
         #self.node = rclpy.create_node('offboard_commander')
@@ -69,7 +70,7 @@ class OffboardCommander(Node):
         }
         self.subscription = self.create_subscription(Joy, '/joy', lambda msg: self.joy_listener_callback(msg, self.pub), 10)
         print(self.subscription)
-        self.pub = self.create_publisher(geometry_msgs.msg.Twist, '/offboard_velocity_cmd', qos_profile)
+        self.pub = self.create_publisher(geometry_msgs.msg.Twist, '/offboard_velocity_cmd', 1)
         self.arm_pub = self.create_publisher(std_msgs.msg.Bool, '/arm_message', qos_profile)
 
     def save_terminal_settings(self):
@@ -178,7 +179,8 @@ class OffboardCommander(Node):
             twist_msg.angular.z = yaw
             twist_msg.linear.z  = throttle
             #Publish the Twist message
-            publisher.publish(twist_msg)
+            if self.joy_mode:
+                publisher.publish(twist_msg)
             self.old_joy_axes = msg.axes
             self.old_joy_buttons = msg.buttons
 
@@ -205,7 +207,8 @@ def main(args=None):
     rclpy.init()
     print(msg)
     commander = OffboardCommander()
-    #commander.run()
+    if not commander.joy_mode:
+        commander.run()
     rclpy.spin(commander)
 
     commander.destroy_node()

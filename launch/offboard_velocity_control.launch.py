@@ -32,8 +32,8 @@
 #
 ############################################################################
 
-__author__ = "Braden Wagstaff"
-__contact__ = "braden@arkelectron.com"
+__author__ = "Sasanka Kuruppu Arachchige"
+__contact__ = "sasa.kuruppuarachchi@gmail.com"
 
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess
@@ -65,20 +65,6 @@ def generate_launch_description():
                 },
             ]
         ),
-        # Node(
-        #     package='px4_ros2_offboard',
-        #     namespace='px4_ros2_offboard',
-        #     executable='processes',
-        #     name='processes',
-        #     prefix='gnome-terminal --'
-        # ),
-        # Node(
-        #     package='px4_ros2_offboard',
-        #     namespace='px4_ros2_offboard',
-        #     executable='control',
-        #     name='control',
-        #     prefix='gnome-terminal --',
-        # ),
         Node(
             package='px4_ros2_offboard',
             namespace='px4_ros2_offboard',

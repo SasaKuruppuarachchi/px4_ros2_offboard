@@ -45,8 +45,8 @@ windows:
   - params:
       layout: tiled
       panes:
-        - ros2 run agi_alphanumeric_viewer agi_alphanumeric_viewer_node use_sim_time:=<%= simulation %> --ros-args -r  __ns:=/<%= drone_namespace %> 
-        - ros2 run px4_ros2_offboard control use_sim_time:=<%= simulation %>
+        - ros2 run agi_alphanumeric_viewer agi_alphanumeric_viewer_node --ros-args -r  __ns:=/<%= drone_namespace %> -p use_sim_time:=<%= simulation %>
+        - ros2 run px4_ros2_offboard control --ros-args -p use_sim_time:=<%= simulation %>
         - ros2 launch px4_ros2_offboard offboard_velocity_control.launch.py use_sim_time:=<%= simulation %>
         
         
@@ -69,4 +69,20 @@ windows:
             use_sim_time:=<%= simulation %>
             plugin_name:=<%= estimator_plugin %>
             plugin_config_file:=<%= state_estimator_config_file %>
-  
+  - tfs:
+      layout: even-vertical
+      panes:
+        - ros2 launch odom_transformer publish_static_transforms.launch.py use_sim_time:=<%= simulation %>
+  - dilo:
+      layout: even-vertical
+      panes:
+        - sorlidar && ros2 launch direct_lidar_inertial_odometry dlio.launch.py rviz:=false use_sim_time:=<%= simulation %>
+  - object_detection:
+      layout: even-vertical
+      panes:
+        - sorlidar && ros2 run yolov5_ros2 obj_detect use_sim_time:=<%= simulation %>
+  - debug:
+      layout: even-horizontal
+      panes:
+        - ros2 topic echo /fmu/in/vehicle_visual_odometry
+        - ros2 run px4_local_navigation_cpp px4_local_navigation --ros-args -p use_sim_time:=<%= simulation %>
