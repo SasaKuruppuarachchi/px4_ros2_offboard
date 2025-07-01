@@ -48,7 +48,7 @@ class OffboardCommander(Node):
         self.joy_found = False
         self.old_joy_axes = Joy.axes
         self.old_joy_buttons = Joy.buttons
-        self.joy_mode = False
+        self.joy_mode = True
 
         
         #self.node = rclpy.create_node('offboard_commander')
@@ -68,9 +68,18 @@ class OffboardCommander(Node):
             '\x1b[C': (0, -1, 0, 0),  # Right Arrow
             '\x1b[D': (0, 1, 0, 0),  # Left Arrow
         }
-        self.subscription = self.create_subscription(Joy, '/joy', lambda msg: self.joy_listener_callback(msg, self.pub), 10)
+        self.subscription = self.create_subscription(Joy, '/joy', lambda msg: self.joy_listener_callback(msg, self.pub), 100)
         print(self.subscription)
-        self.pub = self.create_publisher(geometry_msgs.msg.Twist, '/offboard_velocity_cmd', 1)
+        self.pub = self.create_publisher(
+            geometry_msgs.msg.Twist,
+            '/offboard_velocity_cmd',
+            QoSProfile(
+            reliability=QoSReliabilityPolicy.BEST_EFFORT,
+            durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
+            history=QoSHistoryPolicy.KEEP_LAST,
+            depth=10
+            )
+        )
         self.arm_pub = self.create_publisher(std_msgs.msg.Bool, '/arm_message', qos_profile)
 
     def save_terminal_settings(self):
@@ -167,7 +176,7 @@ class OffboardCommander(Node):
                 #land
         
         if self.arm_toggle:
-            yaw     =self.map_num(-msg.axes[0],min_z_vel, max_z_vel)
+            yaw     =self.map_num(msg.axes[0],min_z_vel, max_z_vel)
             throttle=self.map_num(msg.axes[1],min_h_vel, max_h_vel)
             roll    =self.map_num(msg.axes[3],min_v_vel, max_v_vel)
             pitch   =self.map_num(msg.axes[4],min_v_vel, max_v_vel)
